@@ -1,5 +1,6 @@
 import './style.css'
 
+const invoke = window.__TAURI__.core.invoke;
 
 import {
   checkPermissions,
@@ -25,18 +26,14 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>TauriMobile</h1>
     <p id="geolocation">
     </p>
-    <p>cpt : <span id="compteur">0</span></p>
+    <button>Start Tracking</button>
   </div>
 `;
 
-var compteur = 0;
-setInterval(() => {
-  compteur++;
-  document.querySelector<HTMLParagraphElement>('#compteur')!.textContent = compteur.toString();
-  console.log(compteur);
-}, 1000);
-
-
+const button = document.querySelector<HTMLButtonElement>('button')!;
+button.addEventListener('click', async () => {
+  invoke('start_tracking');
+});
 
 if (permissions.location === 'granted') {
   const pos = await getCurrentPosition();

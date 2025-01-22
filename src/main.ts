@@ -23,7 +23,7 @@ if (
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-    <h1>TauriMobile</h1>
+    <h1>TRACKER</h1>
     <p id="geolocation">
     </p>
     <button>Start Tracking</button>

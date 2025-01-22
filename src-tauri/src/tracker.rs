@@ -8,6 +8,7 @@
 
 // Faire une fonction appelée par le bouton "Stop tracking" qui va arrêter le tracking de l'UI
 use std::time::Duration;
+use std::fs;
 
 use tauri_plugin_geolocation::GeolocationExt;
 
@@ -29,6 +30,14 @@ pub fn start_tracking(app_handle: tauri::AppHandle) {
             interval.tick().await;
             let position = app_handle.geolocation().get_current_position(None).unwrap();
             println!("Tracking trip {}, Latitude = {} , Longitude = {} ", trip.id, position.coords.latitude, position.coords.longitude);
+            let lat = position.coords.latitude.to_string();
+            let lon = position.coords.longitude.to_string();
+            write_to_file(&lat, &lon);
         }
     });
+}
+
+fn write_to_file(lat: &str, lon: &str) {
+    let content = lat.to_string() + "," + lon;
+    fs::write("/storage/emulated/0/Documents/trip.txt", content).expect("Unable to write file");
 }

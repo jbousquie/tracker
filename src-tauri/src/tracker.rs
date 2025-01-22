@@ -9,19 +9,26 @@
 // Faire une fonction appelée par le bouton "Stop tracking" qui va arrêter le tracking de l'UI
 use std::time::Duration;
 
+use tauri_plugin_geolocation::GeolocationExt;
+
+// Utiliser l'API Rust de geo-location :
+// https://v2.tauri.app/develop/plugins/#exposing-rust-apis
+// https://v2.tauri.app/develop/calling-rust/#accessing-an-apphandle-in-commands
 
 struct Trip {
     id: String,
 }
 
+
 #[tauri::command]
-pub fn start_tracking() {
+pub fn start_tracking(app_handle: tauri::AppHandle) {
     let trip = Trip { id: "123".to_string() };
     tauri::async_runtime::spawn(async move {
         let mut interval = tokio::time::interval(Duration::from_secs(5));
         loop {
             interval.tick().await;
-            println!("Tracking trip {}", trip.id);
+            let position = app_handle.geolocation().get_current_position(None).unwrap();
+            println!("Tracking trip {}, Latitude = {} , Longitude = {} ", trip.id, position.coords.latitude, position.coords.longitude);
         }
     });
 }

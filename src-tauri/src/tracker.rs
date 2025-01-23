@@ -28,11 +28,19 @@ pub fn start_tracking(app_handle: tauri::AppHandle) {
         let mut interval = tokio::time::interval(Duration::from_secs(5));
         loop {
             interval.tick().await;
-            let position = app_handle.geolocation().get_current_position(None).unwrap();
-            println!("Tracking trip {}, Latitude = {} , Longitude = {} ", trip.id, position.coords.latitude, position.coords.longitude);
-            let lat = position.coords.latitude.to_string();
-            let lon = position.coords.longitude.to_string();
-            write_to_file(&lat, &lon);
+            let pos_get = app_handle.geolocation().get_current_position(None);
+            match pos_get {
+                Ok(position) => {
+                    println!("Tracking trip {}, Latitude = {} , Longitude = {} ", trip.id, position.coords.latitude, position.coords.longitude);
+                    let lat = position.coords.latitude.to_string();
+                    let lon = position.coords.longitude.to_string();
+                    write_to_file(&lat, &lon);
+                }
+                Err(_e) => {
+                    println!("No position found");
+                }
+                
+            }
         }
     });
 }
